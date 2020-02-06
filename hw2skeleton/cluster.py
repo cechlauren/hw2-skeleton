@@ -47,7 +47,7 @@ my_lame_list = [ [x] for x in new_super_temp]
 #now I need to make my dataframe with all my final values of the counts of those residues in my active sites.
 
 #Miriam helped with this:
-a_df=pd.concat(map(lambda x: pd.DataFrame.from_dict(x),list(map(lambda x: list(map(lambda y: Counter(y),x)),my_lame_list)))).fillna(0)
+a_df=pd.concat(map(lambda z: pd.DataFrame.from_dict(z),list(map(lambda x: list(map(lambda y: Counter(y),x)),my_lame_list)))).fillna(0)
 #This outputs a 136xfeature dataframe with each feature having some number of counts based on the activesite. 
 
 #My activesites are not labeled, so we indexed them
