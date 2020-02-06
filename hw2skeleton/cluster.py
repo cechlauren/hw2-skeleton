@@ -38,7 +38,8 @@ new_super_temp = []
 for almost in new_temp:
     new_super_temp.append(''.join(almost))
 my_lame_list = [ [x] for x in new_super_temp]
-print(my_lame_list)
+# print(my_lame_list) #if you want
+
 
 def compute_similarity(site_a, site_b):
     """
