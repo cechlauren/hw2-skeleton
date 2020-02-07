@@ -38,7 +38,7 @@ for item in temp:
 new_super_temp = []
 for almost in new_temp:
     new_super_temp.append(''.join(almost))
-my_lame_list = [ [x] for x in new_super_temp]
+my_res_list = [ [x] for x in new_super_temp]
 # print(my_lame_list) #if you want
 
 
@@ -47,7 +47,9 @@ my_lame_list = [ [x] for x in new_super_temp]
 #now I need to make my dataframe with all my final values of the counts of those residues in my active sites.
 
 #Miriam helped with this:
-a_df=pd.concat(map(lambda z: pd.DataFrame.from_dict(z),list(map(lambda x: list(map(lambda y: Counter(y),x)),my_lame_list)))).fillna(0)
+counter_list=list(map(lambda x: list(map(lambda y: Counter(y),x)),my_res_list))
+list_of_dfs=map(lambda z: pd.DataFrame.from_dict(z),counter_list)
+a_df = pd.concat(list_of_dfs).fillna(0)
 #This outputs a 136xfeature dataframe with each feature having some number of counts based on the activesite. 
 
 #My activesites are not labeled, so we indexed them
@@ -94,7 +96,21 @@ def cluster_by_partitioning(active_sites):
 
     return []
 
-
+#Will use agglomerative clustering
+#pseudocode:
+#Input: (1)some active sites, (2) recalculated similarity matrix between those active sites
+#output:  some clusterings of  activesites
+#while TRUE do
+    #a single cluster <-- each original active site
+    #find a pair of clusters (a) and (b) such that their similarity s[(a),(b)] = max(s[(m),(n)]);
+    #if (s[(a),(b)]) < or = to some threshold, then
+        #terminate the while loop;
+    #else
+        #merge (a) and (b) into a new cluster(a+b);
+        #update similarity matrix by deleting both the row and the column corresponding to (a) and (b);
+    #end
+#end
+#output current clusters containing similar activesites
 def cluster_hierarchically(active_sites):
     """
     Cluster the given set of ActiveSite instances using a hierarchical algorithm.                                                                  #
