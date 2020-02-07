@@ -118,24 +118,111 @@ def cluster_by_partitioning(active_sites):
             ActiveSite instances)
     """
     # Fill in your code here!
+    
+    """
+    K means summary:
+    A good general purpose way to think about discovering groups in data. However, there are several cons. First, 
+    one has to specify the number of clusters in advance, or do some selection of clusters post hoc.
+    Second, the rules behind belonging to a group are sometimes too simplistic: one point belongs to cluster k if it 
+    is closer to the kth center than any other center.
+    Third, the solution kmeans finds is dependent on the initialization, which often has some randomized component.
+    What happens if our data is more complicated than some partitioning method can describe?
+    ##########################################################################################################
+    #WHAT A SINGLE ITERATION MIGHT LOOK LIKE:
+    Choose number of iterations that might result in convergence
+    m=X.shape[0] #number of training examples to use, given the shape of our data frame
+    n=X.shape[1] #number of features
+    n_iter=100
+    
+    Choose the number of clusters:
+    K=5
+    
+    #start implementing clustering steps
+    #Initialize centroids randomly from the data
+    Centroids=np.array([]).reshape(n,0) 
+    #will be an n*K dimensional matrix where each column is a centroid for one cluster(5)
+    
+    for i in range(K):
+        rand=rd.randint(0,m-1) #generate some random points to use for each cluster 
+        Centroids=np.c_[Centroids,X[rand]] #now we have randomly placed centroids
+        
+    #compute euc distance from centroid and assign cluster based on minimum distance:
+    #initialize our 'output' dictionary: 
+    Output={}
+    #find euc from each point to the centroids and store it in that matrix
+    EuclidianDistance=np.array([]).reshape(m,0) #every row in matrix will have dist of a point to all centroids given
+    
+    for k in range(K):
+       tempDist=np.sum((X-Centroids[:,k])**2,axis=1) #basic definition of euclidean distance, where ,k is ref each centroid location
+        EuclidianDistance=np.c_[EuclidianDistance,tempDist] 
+        #this will concatenate those temporary distances to our euc distances, which helps us as we (re)assign data to clusters later
+    C=np.argmin(EuclidianDistance,axis=1)+1 #find minimum dist and store index of column in C vector
+    
+  
+    #Regroup data points based on cluster index C and store in Output. Compute mean of sep. clusters and assign 
+    #new centroids. Y is now temp dictionary that stores solution for some iteration.
+    Y={}
+    for k in range(K):
+        Y[k+1]=np.array([]).reshape(2,0) #this the array where all the solutions will be stored
+    for i in range(m):
+        Y[C[i]]=np.c_[Y[C[i]],X[i]] #now the minimum euclidean distance for each activesite to the centroid is chosen
+    for k in range(K):
+        Y[k+1]=Y[k+1].T #transpose bc will need to recalculate euc distance to new centroids
+    for k in range(K):
+        Centroids[:,k]=np.mean(Y[k+1],axis=0) #gives us the new centroid location based off mean dist. values
+    ############################################################################################################
+    #WHAT A TRUE KMEANS ALG MIGHT LOOK LIKE:
+    #repeat as described prev. until the convergence is achieved, basically looping over n_int and repeating 
+    
+    for i in range(n_iter):
+     
+      EuclidianDistance=np.array([]).reshape(m,0)
+        for k in range(K):
+            tempDist=np.sum((X-Centroids[:,k])**2,axis=1)
+            EuclidianDistance=np.c_[EuclidianDistance,tempDist]
+        C=np.argmin(EuclidianDistance,axis=1)+1
+     
+     
+      Y={}
+        for k in range(K):
+            Y[k+1]=np.array([]).reshape(2,0)
+        for i in range(m):
+            Y[C[i]]=np.c_[Y[C[i]],X[i]]
+     
+        for k in range(K):
+            Y[k+1]=Y[k+1].T
+    
+        for k in range(K):
+            Centroids[:,k]=np.mean(Y[k+1],axis=0)
+      Output=Y
+      
+      ####################################################
+      #VISUALIZATION
+      #1. scatter original unclustered data
+      plt.scatter(X[:,0],X[:,1],c='black',label='unclustered data')
+      plt.xlabel('')
+      plt.ylabel('')
+      plt.legend()
+      plt.title('Plot of data points')
+      plt.show()
+      
+      
+      #2. now plot clustered data:
+      color=['red','blue','green','cyan','magenta']
+      labels=['cluster1','cluster2','cluster3','cluster4','cluster5']
+      for k in range(K):
+        plt.scatter(Output[k+1][:,0],Output[k+1][:,1],c=color[k],label=labels[k])
+      plt.scatter(Centroids[0,:],Centroids[1,:],s=300,c='yellow',label='Centroids')
+      plt.xlabel('')
+      plt.ylabel('')
+      plt.legend()
+      plt.show()
+
+    """
 
     return []
 
-#Will use agglomerative clustering
-#pseudocode:
-#Input: (1)some active sites, (2) recalculated similarity matrix between those active sites
-#output:  some clusterings of  activesites
-#while TRUE do
-    #a single cluster <-- each original active site
-    #find a pair of clusters (a) and (b) such that their similarity s[(a),(b)] = max(s[(m),(n)]);
-    #if (s[(a),(b)]) < or = to some threshold, then
-        #terminate the while loop;
-    #else
-        #merge (a) and (b) into a new cluster(a+b);
-        #update similarity matrix by deleting both the row and the column corresponding to (a) and (b);
-    #end
-#end
-#output current clusters containing similar activesites
+##################################################################################################
 def cluster_hierarchically(active_sites):
     """
     Cluster the given set of ActiveSite instances using a hierarchical algorithm.                                                                  #
@@ -146,5 +233,23 @@ def cluster_hierarchically(active_sites):
     """
 
     # Fill in your code here!
+    """
+    #Will use agglomerative clustering
+    #pseudocode:
+    #Input: (1)some active sites, (2) recalculated similarity matrix between those active sites
+    #output:  some clusterings of  activesites
+    #while TRUE do
+        #a single cluster <-- each original active site
+        #find a pair of clusters (a) and (b) such that their similarity s[(a),(b)] = max(s[(m),(n)]);
+        #if (s[(a),(b)]) < or = to some threshold, then
+            #terminate the while loop;
+        #else
+            #merge (a) and (b) into a new cluster(a+b);
+            #update similarity matrix by deleting both the row and the column corresponding to (a) and (b);
+        #end
+    #end
+    #output current clusters containing similar activesites
+    """
+    
 
     return []
