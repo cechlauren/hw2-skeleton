@@ -47,22 +47,29 @@ my_res_list = [ [x] for x in new_super_temp]
 #now I need to make my dataframe with all my final values of the counts of those residues in my active sites.
 
 #Miriam helped with this:
+
 counter_list=list(map(lambda x: list(map(lambda y: Counter(y),x)),my_res_list))
 list_of_dfs=list(map(lambda z: pd.DataFrame.from_dict(z),counter_list))
-a_df = pd.concat(list_of_dfs)
+dfObj = pd.DataFrame()
+a_df = dfObj.append(list_of_dfs).fillna(0)
+
+#originally:
+#counter_list=list(map(lambda x: list(map(lambda y: Counter(y),x)),my_res_list))
+#list_of_dfs=list(map(lambda z: pd.DataFrame.from_dict(z),counter_list))
+#a_df = pd.concat(list_of_dfs)
 
 #This outputs a 136xfeature dataframe with each feature having some number of counts based on the activesite. 
 
 #My activesites are not labeled, so we indexed them
-a_df.index=range(0,135)
+#a_df.index=range(0,135)
 
 #I also included a total count list that can inform me about the size of the active site itself
-a_df["total"]=a_df.sum(axis=1)
+#a_df["total"]=a_df.sum(axis=1)
 
 #Compute the similarity between all given ActiveSite instances, where the input is all active site's features
 #(residues and total) counts, and the output will be the "distance" or dissimilarity between them (since I do 1-correlation).
 
-distance_matrix = 1-a_df.T.corr()
+#distance_matrix = 1-a_df.T.corr()
 
 
 
