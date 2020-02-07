@@ -2,22 +2,26 @@ import pandas as pd
 from .utils import Atom, Residue, ActiveSite
 from .io import read_active_sites, read_active_site, write_clustering, write_mult_clusterings
 
+###########################################################################################################
+#PROVIDE CONTEXT TO MY METHODS:
 # I consider each residue in my active sites to embody 4 different physiochemical properties--
 #this means each of the 20 amino acids is now condensed to an alphabet of just 6 letters.
 #these properties are: L = large, A= acidic, B= basic, N= neutral, F= aliphatic, P= polar
 #By reducing the features of my active sites from 20 to 6, I hope to find trends in composition across active sites.
 #Similar composition and similar size would suggest similar ligands (the things that bind to active sites), and thus 
 #similar biological function.
-
+###########################################################################################################
+#MAKE A DICTIONARY:
 #Here's a dictionary of those residues with their corresponding physiochemical definitions:
 convert = {'ARG': 'B', 'LYS': 'B', 'ASP': 'A', 'GLN': 'P', 'ASN': 'P', 'GLU': 'A',
 'HIS': 'B', 'SER': 'P', 'THR': 'P', 'PRO': 'N', 'TYR': 'P', 'CYS': 'P', 'GLY': 'N', 'ALA': 'F',
 'MET': 'N', 'TRP': 'L', 'LEU': 'F', 'VAL': 'A', 'PHE': 'L', 'ILE': 'F'}
-
+###########################################################################################################
+#PREP MY ACTIVE SITE DATA:
 #Now I need to extract all of those active sites from the data folder, using those utility functions.
 #First call the function that reads all active sites in a folder.
 
-#So first I extract the residues from each active site, make them a list, then add them to some temporary list of all active sites.
+#I extract the residues from each active site, make them a list, then add them to some temporary list of all active sites.
 #Next I need to change each of those residue names into my own kind.
 #The residues are still separated, and I need them in one string, so join them together.
 #Finally, I get them into the format I used to start making my similarity matrix. 
@@ -40,41 +44,37 @@ for almost in new_temp:
     new_super_temp.append(''.join(almost))
 my_res_list = [ [x] for x in new_super_temp]
 # print(my_lame_list) #if you want
+#now I should have a list of all my active sites' residues, composed of only those 6 specified features.
+###########################################################################################################
 
-
-
+#MAKE A DATAFRAME OF MY ACTIVESITES X FEATURES:
 
 #now I need to make my dataframe with all my final values of the counts of those residues in my active sites.
 
-#Miriam helped with this:
-
-counter_list=list(map(lambda x: list(map(lambda y: Counter(y),x)),my_res_list))
-list_of_dfs=list(map(lambda z: pd.DataFrame.from_dict(z),counter_list))
-dfObj = pd.DataFrame()
-a_df = dfObj.append(list_of_dfs).fillna(0)
-
-#originally:
-#counter_list=list(map(lambda x: list(map(lambda y: Counter(y),x)),my_res_list))
-#list_of_dfs=list(map(lambda z: pd.DataFrame.from_dict(z),counter_list))
-#a_df = pd.concat(list_of_dfs)
-
+#(Miriam helped with this):
+#Using map allows us to apply a function to directly to a list.
+counter_list=list(map(lambda x: list(map(lambda y: Counter(y),x)),my_res_list)) #This is a counter for each of the features
+list_of_dfs=list(map(lambda z: pd.DataFrame.from_dict(z),counter_list)) #I think this makes a data frame for each of the counts
+dfObj = pd.DataFrame() #make an empty data frame to add our count data frame to
+a_df = dfObj.append(list_of_dfs).fillna(0) #join those two data frames together and fill in all NAs with zero
 #This outputs a 136xfeature dataframe with each feature having some number of counts based on the activesite. 
 
-#My activesites are not labeled, so we indexed them
-a_df.index=range(len(my_res_list))
+#My activesites are not labeled, so need to indexed them
+a_df.index=range(len(my_res_list)) #index them based on length of the list of active sites I put in
 
 #I also included a total count list that can inform me about the size of the active site itself
 a_df["total"]=a_df.sum(axis=1)
 
-#Compute the similarity between all given ActiveSite instances, where the input is all active site's features
+#Determine the similarity between all given ActiveSite instances, where the input is all active site's features
+similarity_df = a_df.T.corr()
 #(residues and total) counts, and the output will be the "distance" or dissimilarity between them (since I do 1-correlation).
 
 distance_matrix = 1-a_df.T.corr()
 
+###########################################################################################################
 
 
-
-#didn't use this...
+#I'd have to guess but:
 def compute_similarity(site_a, site_b):
     """
     Compute the similarity between two given ActiveSite instances.
@@ -86,7 +86,13 @@ def compute_similarity(site_a, site_b):
 
     similarity = 0.0
 
-    # Fill in your code here!
+    #reference site_a, site_b within my similarity data frame(similarity_df)
+        #if their correlation value is 0, 
+            #then they are not similar so similarity = 0.0 still
+        #if their correlation value is 1, 
+            #then they are similar so similarity += 1
+       # for anything else, 
+            #similarity += value of correlation
 
     return similarity
 
