@@ -302,7 +302,8 @@ def cluster_hierarchically(active_sites):
     #cluster distances.
         
 """
-
+################################################################################################
+#CLUSTER QUALITY PREP: DEFINE OUR DISTANCES (INTER/INTRA-CLUSTER):
 def _intra_cluster_dist(X, labels, metric, n_jobs = 1):
     """
     Calculate mean intra-cluster distance for some sample i where:
@@ -323,8 +324,45 @@ def _intra_cluster_dist(X, labels, metric, n_jobs = 1):
         intra_dist[np.where(labels == label)[0]] = values_
     return intra_dist
     
+def _inter_cluster_dist(X, labels, metric, n_jobs = 1):
+    """
+    Calc the mean nearest cluster distance for sample i where:
+    X is an array containing some number of samples with some number of features
+    labels is an array that contains the labels for each sample
+    metric can be euclidean or your favorite distance metric, or if X is the dist. array itself, 
+       just assume 'precomputed.'
+       
+    The output will be a float, a 'mean-nearest' cluster distance for our sample i
+    
+    """
+    inter_dist = np.empty(labels.size, dtype = float)
+    inter_dist.fill(np.inf)
+    #will compute the cluster distances between a pair of clusters
+    
+    some_lab = np.unique(labels)
+    
+    values = Parallel(n_jobs=n_jobs)(
+            delayed(_inter_cluster_dist)(
+                X[np.where(labels == label_a)[0]],
+                X[np.where(labels == label_b)[0]],
+                metric)
+            for label_a, label_b in combinations(some_lab, 2))
+    for (label_a, label_b), (valeus_a, values_b) in \
+            zip(combinations(some_lab, 2), values):
+            
+            indices_a = np.where(labels == label_a)[0]
+            inter_dist[indices_a] = np.minimum(values_a, inter_dist[indices_a])
+            del indices_a
+            indices_a = np.where(labels == label_b)[0]
+            inter_dist[indices_b] = np.minimum(values_b, inter_dist[indices_ b])
+            del indices_b
+
+    return inter_dist
+################################################################################################
 def cluster_quality(some_point_a, some_point_b):
     return[]
+
+
 ################################################################################################
 #COMPARE YOUR TWO CLUSTERINGS:
 
