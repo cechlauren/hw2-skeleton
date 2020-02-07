@@ -86,6 +86,8 @@ def compute_similarity(site_a, site_b):
 
     similarity = 0.0
 
+    #site_a = read_active_site(active_site_a)
+    #site_b = read_active_site(active_site_b)
     #reference site_a, site_b within my similarity data frame(similarity_df)
         #if their correlation value is 0, 
             #then they are not similar so similarity = 0.0 still
