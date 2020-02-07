@@ -49,7 +49,7 @@ my_res_list = [ [x] for x in new_super_temp]
 #Miriam helped with this:
 counter_list=list(map(lambda x: list(map(lambda y: Counter(y),x)),my_res_list))
 list_of_dfs=map(lambda z: pd.DataFrame.from_dict(z),counter_list)
-a_df = pd.concat(list_of_dfs).fillna(0)
+
 #This outputs a 136xfeature dataframe with each feature having some number of counts based on the activesite. 
 
 #My activesites are not labeled, so we indexed them
