@@ -284,6 +284,48 @@ def cluster_hierarchically(active_sites):
     return []
 
 ################################################################################################
+#CLUSTER QUALITY:
+
+#Silhoutte score to check quality of clustering assignment.
+#The range of a SS is from [-1,1].
+#Closer to +1 means that the sample is far away from its neighboring cluster
+#0 means that the sample is on/close to the decision boundary separating two neighboring clusters
+#-1 menas the samples were assigned to the wrong clusters
+
+
+"""
+    #Since:
+    silhouette_score = (p-q)/max(p,q)
+    #where p = mean distance to the points in the nearest cluster
+    #where q = mean intra-cluster distance to all the points
+    #This indicates that we need some functions that can extract the nearest cluster and intra-
+    #cluster distances.
+        
+"""
+
+def _intra_cluster_dist(X, labels, metric, n_jobs = 1):
+    """
+    Calculate mean intra-cluster distance for some sample i where:
+    X is an array containing some number of samples with some number of features
+    labels is an array that contains the labels for each sample
+    metric can be euclidean or your favorite distance metric, or if X is the dist. array itself, 
+       just assume 'precomputed.'
+    
+    The output should be an array containing the intra-cluster distance
+    
+    """
+    intra_dist = np.zeros(labels.size, dtype=float)
+    values = Parallel(n_jobs = n_jobs)(
+            delayed(_intra_cluster_dist)
+                (X[np.where(labels == label)[0]], metric)
+                for label in np.unique(labels))
+    for label, values_ in zip(np.unique(labels), values):
+        intra_dist[np.where(labels == label)[0]] = values_
+    return intra_dist
+    
+def cluster_quality(some_point_a, some_point_b):
+    return[]
+################################################################################################
 #COMPARE YOUR TWO CLUSTERINGS:
 
 #rand index to check clustering assignment, is agnostic to size/dimensionality
