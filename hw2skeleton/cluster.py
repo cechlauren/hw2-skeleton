@@ -64,7 +64,7 @@ a_df = dfObj.append(list_of_dfs).fillna(0)
 a_df.index=range(len(my_res_list))
 
 #I also included a total count list that can inform me about the size of the active site itself
-#a_df["total"]=a_df.sum(axis=1)
+a_df["total"]=a_df.sum(axis=1)
 
 #Compute the similarity between all given ActiveSite instances, where the input is all active site's features
 #(residues and total) counts, and the output will be the "distance" or dissimilarity between them (since I do 1-correlation).
