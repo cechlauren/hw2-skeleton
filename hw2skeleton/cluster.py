@@ -38,39 +38,50 @@ for item in temp:
 new_super_temp = []
 for almost in new_temp:
     new_super_temp.append(''.join(almost))
-my_lame_list = [ [x] for x in new_super_temp]
+my_res_list = [ [x] for x in new_super_temp]
 # print(my_lame_list) #if you want
 
 
+
+
+#now I need to make my dataframe with all my final values of the counts of those residues in my active sites.
+
+#Miriam helped with this:
+
+counter_list=list(map(lambda x: list(map(lambda y: Counter(y),x)),my_res_list))
+list_of_dfs=list(map(lambda z: pd.DataFrame.from_dict(z),counter_list))
+dfObj = pd.DataFrame()
+a_df = dfObj.append(list_of_dfs).fillna(0)
+
+#originally:
+#counter_list=list(map(lambda x: list(map(lambda y: Counter(y),x)),my_res_list))
+#list_of_dfs=list(map(lambda z: pd.DataFrame.from_dict(z),counter_list))
+#a_df = pd.concat(list_of_dfs)
+
+#This outputs a 136xfeature dataframe with each feature having some number of counts based on the activesite. 
+
+#My activesites are not labeled, so we indexed them
+#a_df.index=range(0,135)
+
+#I also included a total count list that can inform me about the size of the active site itself
+#a_df["total"]=a_df.sum(axis=1)
+
+#Compute the similarity between all given ActiveSite instances, where the input is all active site's features
+#(residues and total) counts, and the output will be the "distance" or dissimilarity between them (since I do 1-correlation).
+
+#distance_matrix = 1-a_df.T.corr()
+
+
+
+
+#didn't use this...
 def compute_similarity(site_a, site_b):
     """
     Compute the similarity between two given ActiveSite instances.
 
     Input: two ActiveSite instances
     Output: the similarity between them (a floating point number)
-    def levenshteinDistance(str1, str2):
-    m = len(str1)
-    n = len(str2)
-    lensum = float(m + n)
-    d = []           
-    for i in range(m+1):
-        d.append([i])        
-    del d[0][0]    
-    for j in range(n+1):
-        d[0].append(j)       
-    for j in range(1,n+1):
-        for i in range(1,m+1):
-            if str1[i-1] == str2[j-1]:
-                d[i].insert(j,d[i-1][j-1])           
-            else:
-                minimum = min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1]+2)         
-                d[i].insert(j, minimum)
-    ldist = d[-1][-1]
-    ratio = (lensum - ldist)/lensum
-    return {'distance':ldist, 'ratio':ratio}
- 
-print(levenshteinDistance("kitten","sitting"))   
-print(levenshteinDistance("rosettacode","raisethysword"))
+  
     """
 
     similarity = 0.0
@@ -93,7 +104,21 @@ def cluster_by_partitioning(active_sites):
 
     return []
 
-
+#Will use agglomerative clustering
+#pseudocode:
+#Input: (1)some active sites, (2) recalculated similarity matrix between those active sites
+#output:  some clusterings of  activesites
+#while TRUE do
+    #a single cluster <-- each original active site
+    #find a pair of clusters (a) and (b) such that their similarity s[(a),(b)] = max(s[(m),(n)]);
+    #if (s[(a),(b)]) < or = to some threshold, then
+        #terminate the while loop;
+    #else
+        #merge (a) and (b) into a new cluster(a+b);
+        #update similarity matrix by deleting both the row and the column corresponding to (a) and (b);
+    #end
+#end
+#output current clusters containing similar activesites
 def cluster_hierarchically(active_sites):
     """
     Cluster the given set of ActiveSite instances using a hierarchical algorithm.                                                                  #
