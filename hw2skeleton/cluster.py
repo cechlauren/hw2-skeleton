@@ -330,16 +330,15 @@ def cluster_quality(some_point_a, some_point_b):
 
 #rand index to check clustering assignment, is agnostic to size/dimensionality
 def cluster_compare(cluster_kmeans, cluster_agglomerative):
-"""
-for i in cluster:
-    for j in cluster:
-        #for some cluster with i, is it the same as the cluster of j? and do this for each point
-        #if they are the same:
-        cluster(i) == cluster(j)?
-        if True then TRUE #our clustering was good
-        cluster2(i) == cluster2(j)?
-        if False then FALSE #our clustering was bad
-        
-"""
+    """
+    for i in cluster:
+        for j in cluster:
+            #for some cluster with i, is it the same as the cluster of j? and do this for each point
+            #if they are the same:
+            cluster(i) == cluster(j)?
+            if True then TRUE #our clustering was good
+            cluster2(i) == cluster2(j)?
+            if False then FALSE #our clustering was bad
+    """
     return[]
         
