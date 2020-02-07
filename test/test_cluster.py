@@ -11,6 +11,7 @@ def test_similarity():
 
     # update this assertion
     assert cluster.compute_similarity(activesite_a, activesite_b) == 0.0
+    #assert cluster.compute_similarity(activesite_a, activesite_a) == 1.0
 
 #def test_distance():
    # filename_a = os.path.join("data", "276.pdb")
