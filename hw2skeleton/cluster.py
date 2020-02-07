@@ -69,7 +69,7 @@ a_df["total"]=a_df.sum(axis=1)
 #Compute the similarity between all given ActiveSite instances, where the input is all active site's features
 #(residues and total) counts, and the output will be the "distance" or dissimilarity between them (since I do 1-correlation).
 
-#distance_matrix = 1-a_df.T.corr()
+distance_matrix = 1-a_df.T.corr()
 
 
 
