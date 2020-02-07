@@ -223,6 +223,35 @@ def cluster_by_partitioning(active_sites):
     return []
 
 ##################################################################################################
+#SOME BACKGROUND:
+#So far, we have taken each active site and reduced it down to a set of four features.
+#Each feature has a count for each active site, and each active site has a total sum of all feature counts. 
+#Our dataframe then is composed of floating values from [0:1] that inform us about how correlated our active site features are to each other. 
+#Then if we do 1-corr, we can get the 'distance' each of our active sites are from each other.
+
+#The end product of hierarchical clustering usually is a binary tree that covers the data. The root of this tree
+# is a single cluster that contains all the data, while its leaves would represent individual data points.
+#To make the tree, one needs to make clusters of clusters.
+
+#Agglomerative approach:
+#Agglomerative clustering starts with each data as its own cluster, then merges groups together. Essentially, 
+# an algorithm describing this would take and maintain an active set of clusters that would be decided upon to
+# merge or not at each stage of distance calculations. When two clusters are merged, they are each removed from 
+# the active set and their union is added to the active set. 
+#One iterates this until there is only one cluster in the active set.
+#To get the hierarchical tree, one should keep track of which clusters were merged. 
+#The main decision one needs to make when using agglomerative hierarchical clustering is the distance criteria
+# between groups. While Kmeans does distances between data items, agglomerative will do distances between 
+# groups of data items. Common ones are single linkage (minimum between all inter-group pairs), 
+# complete linkage (maximum), average, and centroid. 
+
+################################################################################################
+#EXAMPLE OF SINGLE LINKAGE:
+
+#def distance_single_linkage({Xn},{Ym}) 
+    #min||Xn-Ym||
+################################################################################################
+
 def cluster_hierarchically(active_sites):
     """
     Cluster the given set of ActiveSite instances using a hierarchical algorithm.                                                                  #
@@ -253,3 +282,22 @@ def cluster_hierarchically(active_sites):
     
 
     return []
+
+################################################################################################
+#COMPARE YOUR TWO CLUSTERINGS:
+
+#rand index to check clustering assignment, is agnostic to size/dimensionality
+def cluster_compare(cluster_kmeans, cluster_agglomerative):
+"""
+for i in cluster:
+    for j in cluster:
+        #for some cluster with i, is it the same as the cluster of j? and do this for each point
+        #if they are the same:
+        cluster(i) == cluster(j)?
+        if True then TRUE #our clustering was good
+        cluster2(i) == cluster2(j)?
+        if False then FALSE #our clustering was bad
+        
+"""
+    return[]
+        
