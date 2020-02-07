@@ -304,6 +304,16 @@ def cluster_hierarchically(active_sites):
 """
 ################################################################################################
 #CLUSTER QUALITY PREP: DEFINE OUR DISTANCES (INTER/INTRA-CLUSTER):
+
+def _intra_cluster_dist_singular(subsetX, metric):
+    """
+    Must find the pairwise distances for all of the points in a cluster, and then find the average distance for that point
+    to the others.
+    """
+    distances = pairwise_distances(subsetX, metric = metric)
+    return distances.sum(axis=1)/ (distances.shape[0]-1)
+
+#Now we can find the mean intra-cluster distance for all of our points in the cluster:
 def _intra_cluster_dist(X, labels, metric, n_jobs = 1):
     """
     Calculate mean intra-cluster distance for some sample i where:
@@ -313,20 +323,33 @@ def _intra_cluster_dist(X, labels, metric, n_jobs = 1):
        just assume 'precomputed.'
     
     The output should be an array containing the intra-cluster distance
-    
+    #So this will compute the distance of points within a cluster
     """
     intra_dist = np.zeros(labels.size, dtype=float)
     values = Parallel(n_jobs = n_jobs)(
-            delayed(_intra_cluster_dist)
+            delayed(_intra_cluster_dist_singular) #use the singular av distance from above
                 (X[np.where(labels == label)[0]], metric)
                 for label in np.unique(labels))
     for label, values_ in zip(np.unique(labels), values):
         intra_dist[np.where(labels == label)[0]] = values_
     return intra_dist
+
+#That completes intra-, or within-, cluster distances. Now we need to compare distances between clusters:
+
+def _inter_cluster_dist_single(subsetX_a, subsetX_b, metric):
+    """
+    Now we find the mean distance for a pair of clusters within all of our clustering assignments.
+    Should probably add a case for when the cluster doesn't exist?
+    """
+    dist = pairwise_distances(subX_a, subX_b, metric=metric)
+    dist_a = dist.mean(axis=1)
+    dist_b = dist.mean(axis=0)
+    return dist_a, dist_b
     
+#Now we can use our single intercluster distances function and apply that to all of our clusters.    
 def _inter_cluster_dist(X, labels, metric, n_jobs = 1):
     """
-    Calc the mean nearest cluster distance for sample i where:
+    Calc the mean nearest cluster distance for sample i compared to all other clusters where:
     X is an array containing some number of samples with some number of features
     labels is an array that contains the labels for each sample
     metric can be euclidean or your favorite distance metric, or if X is the dist. array itself, 
@@ -342,7 +365,7 @@ def _inter_cluster_dist(X, labels, metric, n_jobs = 1):
     some_lab = np.unique(labels)
     
     values = Parallel(n_jobs=n_jobs)(
-            delayed(_inter_cluster_dist)(
+            delayed(_inter_cluster_dist_single)(
                 X[np.where(labels == label_a)[0]],
                 X[np.where(labels == label_b)[0]],
                 metric)
@@ -358,9 +381,28 @@ def _inter_cluster_dist(X, labels, metric, n_jobs = 1):
             del indices_b
 
     return inter_dist
+
 ################################################################################################
-def cluster_quality(some_point_a, some_point_b):
-    return[]
+#USE SILHOUETTE SCORE:
+
+def cluster_quality(X, labels, metric='precomputed', n_jobs=1):
+    """
+    compute silhouette coefficient for each sample. 
+    Models with high Silhouette coefficient are dense because samples in the same cluster are
+    similar to each other.
+    Returns: silhouette coefficient for each sample, where best is 1 and worst is -1, 0 means
+    overlapping clusters
+    
+    X is a feature array
+    labels could be the label values for each sample
+    metric is the string that we describe for measuring distances between instances in a feature array
+    """
+    B = _inter_cluster_dist(X, labels, metric, n_jobs=n_jobs)
+    A = _intra_cluster_dist(X, labels, metric, n_jobs =n_jobs)
+    
+    sil = (B-A)/np.maximum(A, B)
+    #some clusters might have a size of 1 when they should be zero so:
+    return np.nan_to_num(sil)
 
 
 ################################################################################################
