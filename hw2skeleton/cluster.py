@@ -354,7 +354,7 @@ def _inter_cluster_dist(X, labels, metric, n_jobs = 1):
             inter_dist[indices_a] = np.minimum(values_a, inter_dist[indices_a])
             del indices_a
             indices_a = np.where(labels == label_b)[0]
-            inter_dist[indices_b] = np.minimum(values_b, inter_dist[indices_ b])
+            inter_dist[indices_b] = np.minimum(values_b, inter_dist[indices_b])
             del indices_b
 
     return inter_dist
