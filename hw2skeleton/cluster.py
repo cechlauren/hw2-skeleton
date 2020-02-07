@@ -61,7 +61,7 @@ a_df = dfObj.append(list_of_dfs).fillna(0)
 #This outputs a 136xfeature dataframe with each feature having some number of counts based on the activesite. 
 
 #My activesites are not labeled, so we indexed them
-a_df.index=range(0,135)
+a_df.index=range(len(my_res_list))
 
 #I also included a total count list that can inform me about the size of the active site itself
 #a_df["total"]=a_df.sum(axis=1)
