@@ -120,7 +120,7 @@ def compute_similarity(site_a, site_b):
     #now I have a matrix containing all of the correlations between activesites. 
     #The higher the score (0:1), the higher the similarity between them. 
     #To get the similarity, find the instance in the similarity matrix when the two activesites intersect.
-    similarity = similarity_df[site_a, site_b]
+    similarity = similarity_df[site_a][site_b]
     return similarity
 
 def Euclidean_distance(x,y):
