@@ -8,8 +8,8 @@ def test_similarity():
     filename_c = os.path.join("data", "82238.pdb")
     filename_d = os.path.join("data", "7674.pdb")
 
-    activesite_c = io.read_active_site(filename_c)
-    activesite_d = io.read_active_site(filename_d)
+    activesite_c = 82238
+    activesite_d = 7674
     activesite_a = io.read_active_site(filename_a)
     activesite_b = io.read_active_site(filename_b)
 
