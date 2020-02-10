@@ -34,6 +34,7 @@ def test_similarity():
     
    # assert simulation1 == simulation2
    # assert simulation3 == simulation4
+   # assert simulation4 >= 0
     
     
     
