@@ -74,7 +74,8 @@ distance_matrix = 1-a_df.T.corr()
 ###########################################################################################################
 
 
-#I'd have to guess but:
+#I'll consider my similarity metric to be the "correlation" between active site instances that I produced above.
+#I'll copy and paste all of those matrix construction machinations here for the similarity function.
 def compute_similarity(site_a, site_b):
     """
     Compute the similarity between two given ActiveSite instances.
@@ -84,18 +85,42 @@ def compute_similarity(site_a, site_b):
   
     """
 
-    similarity = 0.0
-
-    #site_a = read_active_site(active_site_a)
-    #site_b = read_active_site(active_site_b)
-    #reference site_a, site_b within my similarity data frame(similarity_df)
-        #if their correlation value is 0, 
-            #then they are not similar so similarity = 0.0 still
-        #if their correlation value is 1, 
-            #then they are similar so similarity += 1
-       # for anything else, 
-            #similarity += value of correlation
-
+    
+    convert = {'ARG': 'B', 'LYS': 'B', 'ASP': 'A', 'GLN': 'P', 'ASN': 'P', 'GLU': 'A', 'HIS': 'B', 'SER': 'P', 'THR': 'P', 'PRO': 'N', 'TYR': 'P', 'CYS': 'P', 'GLY': 'N', 'ALA': 'F', 'MET': 'N', 'TRP': 'L', 'LEU': 'F', 'VAL': 'A', 'PHE': 'L', 'ILE': 'F'}
+    
+    My_active_Site = read_active_sites("../data/")
+    temp = []
+    for site in My_active_Site:
+        temp_physio = []
+        amino_acid_list = site.residues
+        for amino_acid in amino_acid_list:
+            temp_physio.append(amino_acid.type)
+        temp.append(temp_physio)
+    new_temp = []
+    for item in temp:
+        new_temp_physio = []
+        for aa in item:
+            new_temp_physio.append(convert[aa])
+        new_temp.append(new_temp_physio)
+    new_super_temp = []
+    for almost in new_temp:
+        new_super_temp.append(''.join(almost))
+    my_res_list = [ [x] for x in new_super_temp]
+    
+    counter_list=list(map(lambda x: list(map(lambda y: Counter(y),x)),my_res_list))
+    list_of_dfs=list(map(lambda z: pd.DataFrame.from_dict(z),counter_list))
+    dfObj = pd.DataFrame()
+    a_df = dfObj.append(list_of_dfs).fillna(0)
+    
+    a_df.index=range(len(my_res_list))
+    a_df["total"]=a_df.sum(axis=1)
+    similarity_df = a_df.T.corr()
+    
+    
+    #now I have a matrix containing all of the correlations between activesites. 
+    #The higher the score (0:1), the higher the similarity between them. 
+    #To get the similarity, find the instance in the similarity matrix when the two activesites intersect.
+    similarity = similarity_df[site_a, site_b]
     return similarity
 
 def Euclidean_distance(x,y):
