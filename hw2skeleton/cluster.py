@@ -2,6 +2,8 @@ import pandas as pd
 from .utils import Atom, Residue, ActiveSite
 from .io import read_active_sites, read_active_site, write_clustering, write_mult_clusterings
 
+"""
+
 ###########################################################################################################
 #PROVIDE CONTEXT TO MY METHODS:
 # I consider each residue in my active sites to embody 4 different physiochemical properties--
@@ -25,6 +27,7 @@ convert = {'ARG': 'B', 'LYS': 'B', 'ASP': 'A', 'GLN': 'P', 'ASN': 'P', 'GLU': 'A
 #Next I need to change each of those residue names into my own kind.
 #The residues are still separated, and I need them in one string, so join them together.
 #Finally, I get them into the format I used to start making my similarity matrix. 
+
 My_active_Site = read_active_sites("../data/")
 temp = []
 for site in My_active_Site:
@@ -74,6 +77,7 @@ similarity_df = a_df.T.corr()
 distance_matrix = 1-a_df.T.corr()
 
 ###########################################################################################################
+"""
 
 
 #I'll consider my similarity metric to be the "correlation" between active site instances that I produced above.
