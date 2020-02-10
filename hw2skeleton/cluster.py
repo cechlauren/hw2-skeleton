@@ -260,7 +260,7 @@ def cluster_by_partitioning(active_sites):
 
 ##################################################################################################
 #SOME BACKGROUND:
-#So far, we have taken each active site and reduced it down to a set of four features.
+#So far, I have taken each active site and reduced it down to a set of six physiochemical features.
 #Each feature has a count for each active site, and each active site has a total sum of all feature counts. 
 #Our dataframe then is composed of floating values from [0:1] that inform us about how correlated our active site features are to each other. 
 #Then if we do 1-corr, we can get the 'distance' each of our active sites are from each other.
