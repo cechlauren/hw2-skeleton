@@ -122,6 +122,7 @@ def compute_similarity(site_a, site_b):
     a_df['']= active_site_index
     a_df.set_index('')
     a_df["total"]=a_df.sum(axis=1)
+    a_df.drop('', axis =1)
     similarity_df = a_df.T.corr()
     
     
