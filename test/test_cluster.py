@@ -8,8 +8,10 @@ def test_similarity():
     filename_c = os.path.join("data", "82238.pdb")
     filename_d = os.path.join("data", "7674.pdb")
 
-    activesite_a = io.read_active_site(filename_c)
-    activesite_b = io.read_active_site(filename_d)
+    activesite_c = io.read_active_site(filename_c)
+    activesite_d = io.read_active_site(filename_d)
+    activesite_a = io.read_active_site(filename_a)
+    activesite_b = io.read_active_site(filename_b)
 
     # update this assertion
     assert cluster.compute_similarity(activesite_c, activesite_d) == 0.6852421390606521
